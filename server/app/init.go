@@ -1,9 +1,15 @@
 package app
 
 import (
-	"github.com/revel/revel"
-	_ "github.com/revel/modules"
+	"context"
+	"os"
+	"time"
 
+	"github.com/joho/godotenv"
+	_ "github.com/revel/modules"
+	"github.com/revel/revel"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -13,6 +19,24 @@ var (
 	// BuildTime revel app build-time (ldflags)
 	BuildTime string
 )
+
+func InitDB() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("ATLAS_URI")))
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
+}
 
 func init() {
 	// Filters is the default set of global filters.
@@ -32,12 +56,8 @@ func init() {
 		revel.ActionInvoker,           // Invoke the action.
 	}
 
-	// Register startup functions with OnAppStart
-	// revel.DevMode and revel.RunMode only work inside of OnAppStart. See Example Startup Script
-	// ( order dependent )
-	// revel.OnAppStart(ExampleStartupScript)
-	// revel.OnAppStart(InitDB)
-	// revel.OnAppStart(FillCache)
+	revel.OnAppStart(InitDB)
+	// revel.OnAppStart(ExampleStartupScript())
 }
 
 // HeaderFilter adds common security headers
