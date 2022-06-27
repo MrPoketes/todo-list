@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface UnauthorizedLayoutProps {
+interface UnauthorizedLayoutRootProps {
 	title: string;
 	children?: React.ReactNode;
 }
 
-export const UnauthorizedLayout: React.FC<UnauthorizedLayoutProps> = ({
+export const UnauthorizedLayoutRoot: React.FC<UnauthorizedLayoutRootProps> = ({
 	title,
 	children
 }) => {

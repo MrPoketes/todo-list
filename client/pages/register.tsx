@@ -4,7 +4,7 @@ import { Form } from '../components/Form/Form';
 import { InputField } from '../components/InputField/InputField';
 import { UnauthorizedLayout } from '../components/UnauthorizedLayout/UnauthorizedLayout';
 
-const Home: NextPage = () => {
+const Register: NextPage = () => {
 	return (
 		<UnauthorizedLayout.Root title="Login">
 			<Form>
@@ -12,12 +12,12 @@ const Home: NextPage = () => {
 				<InputField name="password" type="password" label="Password" />
 			</Form>
 			<UnauthorizedLayout.Footer>
-				<Link href="/register">
-					<a>Register</a>
+				<Link href="/">
+					<a>Log in</a>
 				</Link>
 			</UnauthorizedLayout.Footer>
 		</UnauthorizedLayout.Root>
 	);
 };
 
-export default Home;
+export default Register;

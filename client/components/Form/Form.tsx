@@ -6,8 +6,12 @@ interface FormProps {
 }
 
 export const Form: React.FC<FormProps> = ({ children }) => {
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+	};
+
 	return (
-		<form className="space-y-3">
+		<form className="space-y-3" onSubmit={event => handleSubmit(event)}>
 			{children}
 			<Button label="Log in" />
 		</form>
