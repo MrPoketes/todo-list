@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 
-	_ "github.com/revel/modules"
 	"github.com/revel/revel"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
