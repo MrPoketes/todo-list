@@ -14,6 +14,8 @@ GET / App.Index
 
 POST /register Authentication.Register
 
+POST /login Authentication.Login
+
 # Ignore favicon requests
 
 GET /favicon.ico 404
