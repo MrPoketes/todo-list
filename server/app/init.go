@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"time"
 
 	_ "github.com/revel/modules"
 	"github.com/revel/revel"
@@ -16,6 +15,8 @@ var (
 
 	// BuildTime revel app build-time (ldflags)
 	BuildTime string
+
+	Collection *mongo.Collection
 )
 
 func InitDB() {
@@ -23,17 +24,11 @@ func InitDB() {
 	if !found {
 		panic("No ATLAS_URI found")
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
+	Collection = client.Database("todolist").Collection("users")
 }
 
 func init() {
@@ -55,7 +50,6 @@ func init() {
 	}
 
 	revel.OnAppStart(InitDB)
-	// revel.OnAppStart(ExampleStartupScript())
 }
 
 // HeaderFilter adds common security headers
