@@ -17,6 +17,8 @@ var (
 	BuildTime string
 
 	Collection *mongo.Collection
+
+	Disconnect func()
 )
 
 func InitDB() {
@@ -29,6 +31,12 @@ func InitDB() {
 		panic(err)
 	}
 	Collection = client.Database("todolist").Collection("users")
+
+	Disconnect = func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}
 }
 
 func init() {
@@ -50,6 +58,7 @@ func init() {
 	}
 
 	revel.OnAppStart(InitDB)
+	revel.OnAppStop(Disconnect)
 }
 
 // HeaderFilter adds common security headers
