@@ -86,7 +86,8 @@ func (c Authentication) Login() revel.Result {
 			response.Message = "Incorrect username or password"
 			return c.RenderJSON(response)
 		}
-
+		response.Status = http.StatusOK
+		response.Message = "Successfully loged in"
 		return c.RenderJSON(result)
 	}
 
