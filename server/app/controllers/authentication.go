@@ -33,14 +33,14 @@ func getCredentials(data string) (username, password string, err error) {
 }
 
 func (c Authentication) Register() revel.Result {
-	notAuthorized := models.Response{Status: http.StatusUnauthorized, Data: nil, Message: "User could not be authorized"}
+	response := models.Response{Status: http.StatusUnauthorized, Data: nil, Message: "User could not be authorized"}
 	if auth := c.Request.Header.Get("Authorization"); auth != "" {
 		// Get user data
 		username, password, err := getCredentials(strings.Split(auth, " ")[1])
 		// Validate user data
 		if err := validation(username, password, err, c); err != nil {
-			notAuthorized.Message = "Username and/or password are missing"
-			return c.RenderJSON(notAuthorized)
+			response.Message = "Username and/or password are missing"
+			return c.RenderJSON(response)
 		}
 
 		// Find the user record
@@ -53,45 +53,46 @@ func (c Authentication) Register() revel.Result {
 				panic(err)
 			}
 			newUser := models.User{Username: username, Password: string(encryptedPassword), Items: make([]models.Items, 0)}
-			result, err := app.Collection.InsertOne(context.TODO(), newUser)
-			if err != nil {
+			_, insertErr := app.Collection.InsertOne(context.TODO(), newUser)
+			if insertErr != nil {
 				panic(err)
 			}
-			fmt.Println(result)
+			response.Status = http.StatusOK
+			response.Message = "Successfully registered"
 			return c.RenderJSON(newUser)
 		}
-		notAuthorized.Status = http.StatusConflict
-		notAuthorized.Message = "User already exists"
+		response.Status = http.StatusConflict
+		response.Message = "User already exists"
 	}
-
-	return c.RenderJSON(notAuthorized)
+	fmt.Println("here")
+	return c.RenderJSON(response)
 }
 
 func (c Authentication) Login() revel.Result {
-	notAuthorized := models.Response{Status: http.StatusUnauthorized, Data: nil, Message: "User could not be authorized"}
+	response := models.Response{Status: http.StatusUnauthorized, Data: nil, Message: "User could not be authorized"}
 	if auth := c.Request.Header.Get("Authorization"); auth != "" {
 		// Get user data
 		username, password, err := getCredentials(strings.Split(auth, " ")[1])
 		// Validate user data
 		if err := validation(username, password, err, c); err != nil {
-			notAuthorized.Message = "Username and/or password are missing"
-			return c.RenderJSON(notAuthorized)
+			response.Message = "Username and/or password are missing"
+			return c.RenderJSON(response)
 		}
 
 		// Find the user record
 		result, collErr := getCollectionResult(username)
 		// Check if the user exists and if the passwords match
 		if err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(password)); err != nil || collErr == mongo.ErrNoDocuments {
-			notAuthorized.Message = "Incorrect username or password"
-			return c.RenderJSON(notAuthorized)
+			response.Message = "Incorrect username or password"
+			return c.RenderJSON(response)
 		}
-		// TODO: Add session
+
 		return c.RenderJSON(result)
 	}
 
-	notAuthorized.Status = http.StatusConflict
-	notAuthorized.Message = "User already exists"
-	return c.RenderJSON(notAuthorized)
+	response.Status = http.StatusConflict
+	response.Message = "User already exists"
+	return c.RenderJSON(response)
 }
 
 // Validation function to check for required values
