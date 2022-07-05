@@ -16,6 +16,10 @@ POST /register Authentication.Register
 
 POST /login Authentication.Login
 
+GET /items/:username User.GetItems
+
+POST /items/:username User.PostItems
+
 # Ignore favicon requests
 
 GET /favicon.ico 404
