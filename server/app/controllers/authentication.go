@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"net/http"
 
 	"strings"
@@ -64,7 +63,6 @@ func (c Authentication) Register() revel.Result {
 		response.Status = http.StatusConflict
 		response.Message = "User already exists"
 	}
-	fmt.Println("here")
 	return c.RenderJSON(response)
 }
 
