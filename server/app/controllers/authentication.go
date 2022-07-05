@@ -86,7 +86,8 @@ func (c Authentication) Login() revel.Result {
 		}
 		response.Status = http.StatusOK
 		response.Message = "Successfully loged in"
-		return c.RenderJSON(result)
+		response.Data = result
+		return c.RenderJSON(response)
 	}
 
 	response.Status = http.StatusConflict
