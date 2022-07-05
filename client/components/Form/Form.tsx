@@ -1,19 +1,22 @@
+import { Formik, Form as FormikForm } from 'formik';
 import React from 'react';
-import { Button } from '../Button/Button';
 
 interface FormProps {
 	children?: React.ReactNode;
+	initialValues: Record<string, string>;
+	onSubmit?: (values: Record<string, string>) => void;
 }
 
-export const Form: React.FC<FormProps> = ({ children }) => {
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
+export const Form: React.FC<FormProps> = ({ onSubmit, children, initialValues }) => {
+	const handleSubmit = (event: Record<string, string>) => {
+		if (onSubmit !== undefined) {
+			onSubmit(event);
+		}
 	};
 
 	return (
-		<form className="space-y-3" onSubmit={event => handleSubmit(event)}>
-			{children}
-			<Button label="Log in" />
-		</form>
+		<Formik initialValues={initialValues} onSubmit={values => handleSubmit(values)}>
+			<FormikForm className="space-y-3">{children}</FormikForm>
+		</Formik>
 	);
 };
